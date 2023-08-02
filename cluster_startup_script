@@ -1,0 +1,30 @@
+#!/bin/bash
+
+RECEIPIENTS="devops@unicommerce.com,nikhil.khatwani@unicommerce.com,ankur.pratik@unicommerce.com,sourabh.shrivastava@unicommerce.com"
+TODAY=$(date +'%d-%m-%y-%H:%M')
+spark_job_log_file="/opt/spark-job-logs/job-logs-${TODAY}"
+date1=$(date --date="1 month ago" +"%Y-%m-01 00:00:00")
+date2=$(date --date="2 month ago" +"%Y-%m-01 00:00:00")
+#date2=$(date --date="1 month ago" +"%Y-%m-01 00:00:00")
+shipping_package_count=$(mysql -udeveloper -pDevelopeR@4# -hdb.address.unicommerce.infra turbo -e "select count(*) from shipping_package_address")
+echo $shipping_package_count
+#echo -e "shipping_package_address count before job run: ${shipping_package_count}" | mutt -s "shipping_package_address count" ${RECEIPIENTS}
+cd /spark/third_party_jars
+/spark/bin/spark-submit --conf spark.driver.args="${date2},${date1}" --jars /spark/third_party_jars/matplotlib4j-0.5.0.jar,/spark/third_party_jars/libphonenumber-8.13.0.jar,/spark/third_party_jars/guava-11.0.2.jar,/spark/third_party_jars/fuzzywuzzy-1.3.0.jar,/spark/third_party_jars/javax.mail.jar,/spark/third_party_jars/hadoop-common-3.3.4.jar,/spark/third_party_jars/mysql-connector-j-8.0.31.jar,/spark/third_party_jars/Spark-MongoDB-0.12.0-RC1/spark-mongodb_2.10/target/spark-mongodb_2.10-0.12.0-RC1.jar,/spark/third_party_jars/mongo-java-driver-3.12.12.jar --class AddressServicePipeline --deploy-mode cluster --supervise AddressServicePipeline.jar  > ${spark_job_log_file} 2>&1
+
+tracking_url=$(grep -w 'tracking URL:' ${spark_job_log_file} | uniq)
+echo ${tracking_url}
+
+job_id=$(echo $tracking_url | sed 's|http://namenode.unicommerce.infra:8088/proxy/||1' | tr -d '[[:blank:]]' | cut -d ':' -f2 | sed 's|.$||')
+echo ${job_id}
+
+job_status=$(/hadoop/bin/yarn application -status ${job_id} | grep -w 'Final-State' | cut -d ':' -f2 | sed 's|[[:blank:]]||1')
+echo ${job_status}
+
+if [[ "${job_status}" == "SUCCEEDED" ]];then
+shipping_package_activecount=$(mysql -udeveloper -pDevelopeR@4# -hdb.address.unicommerce.infra turbo -e "select count(*) from shipping_package_address")
+echo $shipping_package_activecount
+	echo -e "Pipeline has run successfully.\nJob Id: ${job_id} \nshipping_package before count: ${shipping_package_count} \nshipping_package after count: ${shipping_package_activecount}" | mutt -s "Spark Address Fill Job Status - Successful" ${RECEIPIENTS}
+else 
+	echo -e "Pipeline Failed.\nJob Id: ${job_id}" | mutt -s "Spark Address Fill Job Status - Failed" ${RECEIPIENTS}
+fi
