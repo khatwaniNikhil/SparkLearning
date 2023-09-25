@@ -1,4 +1,4 @@
-# Top Tuning Strategies
+# Top Spark Cluster Tuning Strategies
 ## 1. Identify and handle data skewness
 #### How to identify
 1. Go to Stages tab in Spark UI: the skewed partitions hang within a stage and don’t seem to progress for a while on a few partitions. If we look at the summary metrics, the max column usually has a much larger value than the medium and more records count. Then we know we have encountered a data skew issue.
