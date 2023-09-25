@@ -16,7 +16,7 @@ https://help.hitachivantara.com/Documentation/Pentaho/Data_Integration_and_Analy
 ## 3. Good Tenant config. in case of multiple tenants/teams sharing Spark Infra
 set max limits around executors requested by each tenant in multi tenant env. don't abuse Spark dynamic allocation
 
-## 4. Parition metrics to look for
+## 4. Partition metrics to look for
 1. Each partition size should be smaller than 200 MB to gain optimized performance.
 2. The number of partitions should be 1x to 4x of the number of cores you have to gain optimized performance (which means create a cluster that matches your data scale is also important).
 
