@@ -1,12 +1,12 @@
 #!/bin/bash
 
-RECEIPIENTS="devops@unicommerce.com,nikhil.khatwani@unicommerce.com,ankur.pratik@unicommerce.com,sourabh.shrivastava@unicommerce.com"
+RECEIPIENTS="xyz@gmail.com"
 TODAY=$(date +'%d-%m-%y-%H:%M')
 spark_job_log_file="/opt/spark-job-logs/job-logs-${TODAY}"
 date1=$(date --date="1 month ago" +"%Y-%m-01 00:00:00")
 date2=$(date --date="2 month ago" +"%Y-%m-01 00:00:00")
 #date2=$(date --date="1 month ago" +"%Y-%m-01 00:00:00")
-shipping_package_count=$(mysql -udeveloper -pDevelopeR@4# -hdb.address.unicommerce.infra turbo -e "select count(*) from shipping_package_address")
+shipping_package_count=$(mysql -ud -pp -hdb.address.unicommerce.infra turbo -e "select count(*) from shipping_package_address")
 echo $shipping_package_count
 #echo -e "shipping_package_address count before job run: ${shipping_package_count}" | mutt -s "shipping_package_address count" ${RECEIPIENTS}
 cd /spark/third_party_jars
