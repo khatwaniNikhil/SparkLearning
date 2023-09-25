@@ -22,3 +22,4 @@ set max limits around executors requested by each tenant in multi tenant env. do
 
 # References
 1. https://nealanalytics.com/blog/databricks-spark-jobs-optimization-techniques-shuffle-partition-technique-part-1/
+2. https://chengzhizhao.com/deep-dive-into-handling-apache-spark-data-skew/
