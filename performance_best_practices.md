@@ -10,8 +10,8 @@
 2. **salting**: Add the salt key as part of the key as a new column. The newly added key forces Spark to hash the new key to a different hash value
 
 ## 2. Structured way to do cluster infra planning
-https://github.com/khatwaniNikhil/SparkLearning/blob/main/infra_config.md
-https://help.hitachivantara.com/Documentation/Pentaho/Data_Integration_and_Analytics/9.3/Setup/Determining_Spark_resource_requirements
+1. https://github.com/khatwaniNikhil/SparkLearning/blob/main/infra_config.md
+2. https://help.hitachivantara.com/Documentation/Pentaho/Data_Integration_and_Analytics/9.3/Setup/Determining_Spark_resource_requirements
 
 ## 3. Good Tenant config. in case of multiple tenants/teams sharing Spark Infra
 set max limits around executors requested by each tenant in multi tenant env. don't abuse Spark dynamic allocation
