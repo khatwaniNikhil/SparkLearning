@@ -3,6 +3,7 @@
 2. https://chengzhizhao.com/deep-dive-into-handling-apache-spark-data-skew/
 3. https://nealanalytics.com/blog/databricks-spark-jobs-optimization-techniques-shuffle-partition-technique-part-1/
 4. https://www.pepperdata.com/blog/spark-performance-tuning-tips-expert/
+5. https://spark.apache.org/docs/latest/sql-performance-tuning.html
 
 # Spark Cluster Tuning Strategies
 
