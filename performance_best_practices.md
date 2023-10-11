@@ -1,13 +1,29 @@
-# Top Spark Cluster Tuning Strategies
-## 1. Identify and handle data skewness
-#### How to identify
-1. Go to Stages tab in Spark UI: the skewed partitions hang within a stage and don’t seem to progress for a while on a few partitions. If we look at the summary metrics, the max column usually has a much larger value than the medium and more records count. Then we know we have encountered a data skew issue.
-2. go to stage detail page in Spark UI for visual representation of the DAG. 
-3. use WholeStageCodegen ids and go to the Spark Data Frame tab to find the code and hover on the SQL plan graphs to know the detail of what’s running in your code.
+# Spark Cluster Tuning Strategies
+
+## 1. Fixing slownes due to data skewness
+#### How skewness is introduced
+1. spark wide transformations like groupby and join are key based and keys are hashed and mappe to partitions. Thus shuffle(costly operation) of existing data is unavoidable. Post shuffle, hotspots may be created/uneven data distribution. Processing will slow down as other than hotspot partition, rest are idle most of the time.
+
+#### Monitor skewness
+##### Spark UI
+1. Go to Stages tab in Spark UI: the skewed partitions hang within a stage and don’t seem to progress.
+2. Look at the summary metrics, the max column usually has a much larger value. Then we know we have encountered a data skew issue.
+
+##### Partitions count and stats per partition
+1. df.withColumn("partitionId", spark_partition_id())
+2. df.groupby([df.partitionId]).count().sort(df.partitionId).show()
+3. df.alias("left").join(df.alias("right"),"value", "inner").count()
+4. check the plan - amount of data in each partition and duration(min, med, max) - is max very high as compared to med
+![](https://github.com/khatwaniNikhil/SparkLearning/blob/main/images/spark_df_no_skew_verify_via_self_join_is_sort_merge_join.png)
+
+#### Identify specific piece of code causing skewness 
+1. Go to stage tab and capture Whole Stage Code Generation id's  
+2. Crossreference the stage code gen id's with SQL plan graphs to know the detail of what’s running in your code.
 
 #### Fixing data skewness
-1. revisit "spark.sql.shuffle.partitions" value
-2. **salting**: Add the salt key as part of the key as a new column. The newly added key forces Spark to hash the new key to a different hash value
+1. Adaptive Query Execution (AQE) setting - spark tries to optimise
+2. revisit "spark.sql.shuffle.partitions" value to reduce skewness
+3. **salting**: Add the salt key as part of the key as a new column. The newly added key forces Spark to hash the new key to a different hash value
 
 ## 2. Structured way to do cluster infra planning
 1. https://github.com/khatwaniNikhil/SparkLearning/blob/main/infra_config.md
