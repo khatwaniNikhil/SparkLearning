@@ -6,7 +6,7 @@ spark_job_log_file="/opt/spark-job-logs/job-logs-${TODAY}"
 date1=$(date --date="1 month ago" +"%Y-%m-01 00:00:00")
 date2=$(date --date="2 month ago" +"%Y-%m-01 00:00:00")
 #date2=$(date --date="1 month ago" +"%Y-%m-01 00:00:00")
-shipping_package_count=$(mysql -ud -pp -hdb.address.unicommerce.infra turbo -e "select count(*) from shipping_package_address")
+shipping_package_count=$(mysql -ud -pp -hdb.address.xyz.infra turbo -e "select count(*) from shipping_package_address")
 echo $shipping_package_count
 #echo -e "shipping_package_address count before job run: ${shipping_package_count}" | mutt -s "shipping_package_address count" ${RECEIPIENTS}
 cd /spark/third_party_jars
@@ -15,14 +15,14 @@ cd /spark/third_party_jars
 tracking_url=$(grep -w 'tracking URL:' ${spark_job_log_file} | uniq)
 echo ${tracking_url}
 
-job_id=$(echo $tracking_url | sed 's|http://namenode.unicommerce.infra:8088/proxy/||1' | tr -d '[[:blank:]]' | cut -d ':' -f2 | sed 's|.$||')
+job_id=$(echo $tracking_url | sed 's|http://namenode.xyz.infra:8088/proxy/||1' | tr -d '[[:blank:]]' | cut -d ':' -f2 | sed 's|.$||')
 echo ${job_id}
 
 job_status=$(/hadoop/bin/yarn application -status ${job_id} | grep -w 'Final-State' | cut -d ':' -f2 | sed 's|[[:blank:]]||1')
 echo ${job_status}
 
 if [[ "${job_status}" == "SUCCEEDED" ]];then
-shipping_package_activecount=$(mysql -udeveloper -pDevelopeR@4# -hdb.address.unicommerce.infra turbo -e "select count(*) from shipping_package_address")
+shipping_package_activecount=$(mysql -u@username -p@password -hdb.address.xyz.infra turbo -e "select count(*) from shipping_package_address")
 echo $shipping_package_activecount
 	echo -e "Pipeline has run successfully.\nJob Id: ${job_id} \nshipping_package before count: ${shipping_package_count} \nshipping_package after count: ${shipping_package_activecount}" | mutt -s "Spark Address Fill Job Status - Successful" ${RECEIPIENTS}
 else 
